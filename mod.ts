@@ -12,13 +12,21 @@
  */
 export const defaultDarkModeScript: string = `
   function applyDefaultTheme(change) {
-    if (change === 'auto') delete localStorage.theme; 
-    else if (change === 'on') localStorage.theme = 'dark'; 
-    else if (change === 'off') localStorage.theme = 'light';
+    if (!("theme" in localStorage)) {
+      localStorage.theme = 'dark';  // Ensure dark mode is set as default
+    }
+
+    if (change === 'auto') {
+      delete localStorage.theme;
+    } else if (change === 'on') {
+      localStorage.theme = 'dark';
+    } else if (change === 'off') {
+      localStorage.theme = 'light';
+    }
 
     window.isDark = localStorage.theme === "dark" || 
       (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches);
-    
+
     document.documentElement.classList[window.isDark ? 'add' : 'remove']("dark");
   }
   applyDefaultTheme();
