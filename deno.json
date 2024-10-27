@@ -1,0 +1,20 @@
+{
+  "name": "@elsoul/fresh-theme",
+  "version": "1.0.0",
+  "description": "Theme Module for Fresh v2 App.",
+  "runtimes": ["deno", "browser"],
+  "exports": "./mod.ts",
+  "tasks": {
+    "dev": "deno test --watch mod.ts",
+    "test": "deno test --watch mod_test.ts"
+  },
+  "license": "Apache-2.0",
+  "imports": {
+  },
+  "fmt": {
+    "options": {
+      "semiColons": false,
+      "singleQuote": true
+    }
+  }
+}
