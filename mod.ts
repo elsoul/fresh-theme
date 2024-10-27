@@ -10,7 +10,7 @@
  * If none is set, it defaults to dark mode or follows the system's dark mode preference.
  * @type {string}
  */
-export const defaultDarkModeScript = `
+export const defaultDarkModeScript: string = `
   function applyDefaultTheme(change) {
     if (change === 'auto') delete localStorage.theme; 
     else if (change === 'on') localStorage.theme = 'dark'; 
@@ -30,7 +30,7 @@ export const defaultDarkModeScript = `
  * If none is set, it defaults to light mode or follows the system's dark mode preference.
  * @type {string}
  */
-export const defaultLightModeScript = `
+export const defaultLightModeScript: string = `
   function applyDefaultTheme(change) {
     if (change === 'auto') delete localStorage.theme; 
     else if (change === 'on') localStorage.theme = 'dark'; 
