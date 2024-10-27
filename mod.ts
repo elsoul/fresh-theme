@@ -61,4 +61,9 @@ export const defaultLightModeScript: string = `
  */
 export function setTheme(newTheme: 'dark' | 'light'): void {
   localStorage.setItem('theme', newTheme)
+  // If running in a client environment with document access
+  if (globalThis.document) {
+    // Apply or remove the 'dark' class on the <html> element
+    document.documentElement.classList.toggle('dark', newTheme === 'dark')
+  }
 }
