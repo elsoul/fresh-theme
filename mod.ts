@@ -72,13 +72,20 @@ export function setTheme(newTheme: 'dark' | 'light'): void {
 }
 
 /**
+ * Type definition for the return value of the useTheme hook.
+ */
+type UseThemeReturn = {
+  theme: 'dark' | 'light'
+  setTheme: (newTheme: 'dark' | 'light') => void
+}
+
+/**
  * Custom hook to manage the theme (light or dark) based on localStorage.
  * Provides a function to set the theme and returns the current theme value.
  *
- * @returns {{ theme: 'dark' | 'light', setTheme: (newTheme: 'dark' | 'light') => void }}
- * An object containing the current theme and a function to set the theme.
+ * @returns {UseThemeReturn} An object containing the current theme and a function to set the theme.
  */
-export function useTheme() {
+export function useTheme(): UseThemeReturn {
   const theme = useSignal<'dark' | 'light'>(
     (localStorage.getItem('theme') as 'dark' | 'light') || 'dark',
   )
