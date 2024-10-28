@@ -1,3 +1,6 @@
+import { useSignal } from '@preact/signals'
+import { useEffect } from 'preact/hooks'
+
 /**
  * Theme module for setting up light or dark modes in a Fresh app.
  * Provides a default dark mode script, a default light mode script,
@@ -66,4 +69,31 @@ export function setTheme(newTheme: 'dark' | 'light'): void {
     // Apply or remove the 'dark' class on the <html> element
     document.documentElement.classList.toggle('dark', newTheme === 'dark')
   }
+}
+
+/**
+ * Custom hook to manage the theme (light or dark) based on localStorage.
+ * Returns the current theme value.
+ *
+ * @returns {'dark' | 'light'} The current theme.
+ */
+export function useTheme(): 'dark' | 'light' {
+  const theme = useSignal<'dark' | 'light'>(
+    localStorage.getItem('theme') as 'dark' | 'light' || 'dark',
+  )
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      theme.value = localStorage.getItem('theme') as 'dark' | 'light' || 'dark'
+    }
+
+    globalThis.addEventListener('themeLocalStorage', handleStorageChange)
+
+    // Cleanup the event listener on unmount
+    return () => {
+      globalThis.removeEventListener('themeLocalStorage', handleStorageChange)
+    }
+  }, [])
+
+  return theme.value
 }
