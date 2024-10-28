@@ -117,6 +117,27 @@ Adjusts the `<html>` element to reflect the new theme.
 - **Parameters**:
   - `newTheme` - The desired theme, either `'dark'` or `'light'`.
 
+### useTheme hook
+
+```typescript
+import { useTheme } from 'jsr:@elsoul/fresh-theme'
+
+function ThemeToggleButton() {
+  const { theme, setTheme } = useTheme()
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark'
+    setTheme(newTheme)
+  }
+
+  return (
+    <button onClick={toggleTheme}>
+      Switch to {theme === 'dark' ? 'Light' : 'Dark'} Mode
+    </button>
+  )
+}
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at
