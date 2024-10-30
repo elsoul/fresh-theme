@@ -1,6 +1,6 @@
 {
   "name": "@elsoul/fresh-theme",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Theme Module for Fresh v2 App.",
   "runtimes": ["deno", "browser"],
   "exports": "./mod.ts",

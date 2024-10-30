@@ -1,5 +1,5 @@
 import { useEffect } from 'preact/hooks'
-import { atom, useAtom } from 'fresh-atom'
+import { type Atom, atom, useAtom } from 'fresh-atom'
 
 /**
  * Atom for theme management, storing either 'dark' or 'light' mode.
@@ -7,7 +7,7 @@ import { atom, useAtom } from 'fresh-atom'
  *
  * @type {Atom<'dark' | 'light'>}
  */
-export const themeAtom = atom<'dark' | 'light'>(
+export const themeAtom: Atom<'dark' | 'light'> = atom(
   (localStorage.getItem('theme') as 'dark' | 'light') || 'dark',
 )
 
