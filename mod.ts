@@ -1,4 +1,4 @@
-import { useSignal } from '@preact/signals'
+import { type Signal, useSignal } from '@preact/signals'
 import { useEffect } from 'preact/hooks'
 
 /**
@@ -75,7 +75,7 @@ export function setTheme(newTheme: 'dark' | 'light'): void {
  * Type definition for the return value of the useTheme hook.
  */
 type UseThemeReturn = {
-  theme: 'dark' | 'light'
+  theme: Signal<'dark' | 'light'>
   setTheme: (newTheme: 'dark' | 'light') => void
 }
 
@@ -125,5 +125,5 @@ export function useTheme(): UseThemeReturn {
     theme.value = newTheme
   }
 
-  return { theme: theme.value, setTheme }
+  return { theme, setTheme }
 }
