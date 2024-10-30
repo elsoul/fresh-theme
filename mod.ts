@@ -1,16 +1,20 @@
-import { type Signal, useSignal } from '@preact/signals'
 import { useEffect } from 'preact/hooks'
+import { atom, useAtom } from 'fresh-atom'
 
 /**
- * Theme module for setting up light or dark modes in a Fresh app.
- * Provides a default dark mode script, a default light mode script,
- * and a function to toggle and persist the theme on the client side.
+ * Atom for theme management, storing either 'dark' or 'light' mode.
+ * Initializes theme based on `localStorage` or defaults to 'dark'.
+ *
+ * @type {Atom<'dark' | 'light'>}
  */
+export const themeAtom = atom<'dark' | 'light'>(
+  (localStorage.getItem('theme') as 'dark' | 'light') || 'dark',
+)
 
 /**
  * JavaScript code to initialize default dark mode.
- * This script checks for the `localStorage` theme setting.
- * If none is set, it defaults to dark mode or follows the system's dark mode preference.
+ * Sets theme to 'dark' if none is set, or follows system dark mode preference.
+ *
  * @type {string}
  */
 export const defaultDarkModeScript: string = `
@@ -37,8 +41,8 @@ export const defaultDarkModeScript: string = `
 
 /**
  * JavaScript code to initialize default light mode.
- * This script checks for the `localStorage` theme setting.
- * If none is set, it defaults to light mode or follows the system's dark mode preference.
+ * Sets theme to 'light' if none is set, or follows system dark mode preference.
+ *
  * @type {string}
  */
 export const defaultLightModeScript: string = `
@@ -56,74 +60,64 @@ export const defaultLightModeScript: string = `
 `
 
 /**
- * Sets the theme to either 'dark' or 'light' mode and saves the choice in localStorage.
- * When a user toggles the theme, this function updates the theme in localStorage
- * and adjusts the `dark` class on the `<html>` element.
+ * Updates the theme to either 'dark' or 'light' mode and saves the choice in `localStorage`.
+ * This function also adjusts the `dark` class on the `<html>` element to apply the theme.
  *
  * @param {'dark' | 'light'} newTheme - The theme to set, either 'dark' or 'light'.
  */
 export function setTheme(newTheme: 'dark' | 'light'): void {
   localStorage.setItem('theme', newTheme)
-  // If running in a client environment with document access
   if (globalThis.document) {
-    // Apply or remove the 'dark' class on the <html> element
     document.documentElement.classList.toggle('dark', newTheme === 'dark')
   }
 }
 
 /**
- * Type definition for the return value of the useTheme hook.
+ * Type definition for the return value of the `useTheme` hook.
+ *
+ * @typedef {Object} UseThemeReturn
+ * @property {'dark' | 'light'} theme - The current theme.
+ * @property {(newTheme: 'dark' | 'light') => void} setTheme - Function to update the theme.
  */
 type UseThemeReturn = {
-  theme: Signal<'dark' | 'light'>
+  theme: 'dark' | 'light'
   setTheme: (newTheme: 'dark' | 'light') => void
 }
 
 /**
- * Custom hook to manage the theme (light or dark) based on localStorage.
+ * Custom hook to manage the theme (light or dark) using `fresh-atom`.
  * Provides a function to set the theme and returns the current theme value.
+ * Listens for `localStorage` changes to sync theme across tabs.
  *
  * @returns {UseThemeReturn} An object containing the current theme and a function to set the theme.
  */
 export function useTheme(): UseThemeReturn {
-  const theme = useSignal<'dark' | 'light'>(
-    (localStorage.getItem('theme') as 'dark' | 'light') || 'dark',
-  )
+  const [theme, setTheme] = useAtom(themeAtom)
 
   useEffect(() => {
     const handleStorageChange = () => {
-      theme.value = (localStorage.getItem('theme') as 'dark' | 'light') ||
-        'dark'
+      const savedTheme = localStorage.getItem('theme') as 'dark' | 'light'
+      setTheme(savedTheme || 'dark')
     }
 
-    // Add listener for storage changes (works across tabs)
     globalThis.addEventListener('storage', handleStorageChange)
 
-    // Cleanup the event listener on unmount
     return () => {
       globalThis.removeEventListener('storage', handleStorageChange)
     }
   }, [])
 
   /**
-   * Sets the theme to either 'dark' or 'light' mode and saves the choice in localStorage.
-   * When a user toggles the theme, this function updates the theme in localStorage
-   * and adjusts the `dark` class on the `<html>` element.
+   * Set the theme both locally and in `localStorage`.
+   * Adjusts the `dark` class on the `<html>` element based on the selected theme.
    *
    * @param {'dark' | 'light'} newTheme - The theme to set, either 'dark' or 'light'.
    */
-  const setTheme = (newTheme: 'dark' | 'light'): void => {
+  const updateTheme = (newTheme: 'dark' | 'light') => {
     localStorage.setItem('theme', newTheme)
-
-    // If running in a client environment with document access
-    if (globalThis.document) {
-      // Apply or remove the 'dark' class on the <html> element
-      document.documentElement.classList.toggle('dark', newTheme === 'dark')
-    }
-
-    // Update the signal value
-    theme.value = newTheme
+    document.documentElement.classList.toggle('dark', newTheme === 'dark')
+    setTheme(newTheme)
   }
 
-  return { theme, setTheme }
+  return { theme, setTheme: updateTheme }
 }
